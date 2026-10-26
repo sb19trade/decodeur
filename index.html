@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="color-scheme" content="light dark">
+<title>Décodeur</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <svg class="mark" viewBox="0 0 40 40" aria-hidden="true">
+      <rect x="1" y="1" width="38" height="38" rx="10" fill="none" stroke="currentColor" stroke-width="2"></rect>
+      <line x1="12" y1="10" x2="12" y2="30" stroke="currentColor" stroke-width="2"></line>
+      <rect x="9" y="15" width="6" height="10" rx="1" fill="currentColor"></rect>
+      <line x1="20" y1="8" x2="20" y2="26" stroke="currentColor" stroke-width="2"></line>
+      <rect x="17" y="12" width="6" height="9" rx="1" fill="none" stroke="currentColor" stroke-width="2"></rect>
+      <line x1="28" y1="12" x2="28" y2="32" stroke="currentColor" stroke-width="2"></line>
+      <rect x="25" y="17" width="6" height="11" rx="1" fill="currentColor"></rect>
+    </svg>
+    <div>
+      <h1>Décodeur</h1>
+      <p class="sub">Analyse technique de tes captures MT5, calculée sur ton iPhone</p>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button type="button" role="tab" id="tab-analyse" aria-selected="true" data-view="analyse">Analyser</button>
+    <button type="button" role="tab" id="tab-hist" aria-selected="false" data-view="hist">Historique</button>
+    <button type="button" role="tab" id="tab-guide" aria-selected="false" data-view="guide">Bien capturer</button>
+  </nav>
+
+  <main id="view-analyse" class="view">
+    <section class="panel" aria-labelledby="cap-h">
+      <h2 id="cap-h">Ta capture</h2>
+      <div>
+        <input type="file" id="shots" class="vh" accept="image/*" multiple>
+        <label class="drop" for="shots" id="drop">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"></path><path d="M12 4v11"></path><path d="m7 9 5-5 5 5"></path></svg>
+          <strong>Choisir une capture</strong>
+          <small id="dropHint">Jusqu'à 3 images, par exemple H1 pour le contexte et M5 pour l'entrée.</small>
+        </label>
+      </div>
+      <div class="thumbs" id="thumbs"></div>
+
+      <fieldset class="field">
+        <legend class="lbl">Paire</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="pair" id="pair-auto" value="" checked><span>Lire sur le graphique</span></label>
+          <label class="chip sym"><input type="radio" name="pair" id="pair-xauusd" value="XAUUSD"><span>XAUUSD</span></label>
+          <label class="chip sym"><input type="radio" name="pair" id="pair-xaueur" value="XAUEUR"><span>XAUEUR</span></label>
+          <label class="chip sym"><input type="radio" name="pair" id="pair-eurusd" value="EURUSD"><span>EURUSD</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend class="lbl">Unité de temps</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="tf" id="tf-auto" value="" checked><span>Lire sur le graphique</span></label>
+          <label class="chip sym"><input type="radio" name="tf" id="tf-m1" value="M1"><span>M1</span></label>
+          <label class="chip sym"><input type="radio" name="tf" id="tf-m5" value="M5"><span>M5</span></label>
+          <label class="chip sym"><input type="radio" name="tf" id="tf-m15" value="M15"><span>M15</span></label>
+          <label class="chip sym"><input type="radio" name="tf" id="tf-h1" value="H1"><span>H1</span></label>
+          <label class="chip sym"><input type="radio" name="tf" id="tf-h4" value="H4"><span>H4</span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="field">
+        <legend class="lbl">Ta façon de trader</legend>
+        <div class="chips">
+          <label class="chip"><input type="radio" name="style" id="style-scalp" value="scalping" checked><span>Scalping</span></label>
+          <label class="chip"><input type="radio" name="style" id="style-intra" value="intraday"><span>Intraday</span></label>
+          <label class="chip"><input type="radio" name="style" id="style-swing" value="swing"><span>Swing</span></label>
+        </div>
+      </fieldset>
+
+      <details class="acct" id="acct">
+        <summary><span>Mon compte</span><span id="acctSum"></span></summary>
+        <div class="grid2">
+          <label for="capital">Capital du compte<input type="text" id="capital" inputmode="decimal" autocomplete="off"></label>
+          <label for="devise">Devise du compte<select id="devise"><option value="EUR">Euro (€)</option><option value="USD">Dollar ($)</option></select></label>
+          <label for="risque">Risque par trade (%)<input type="text" id="risque" inputmode="decimal" autocomplete="off"></label>
+          <label for="taux">Taux : 1 € = ? $<input type="text" id="taux" inputmode="decimal" autocomplete="off"></label>
+        </div>
+        <p class="hint">Sert à calculer la taille de position et la marge. Tout reste sur ce téléphone. Mets le taux à jour de temps en temps.</p>
+      </details>
+
+      <p class="notice" id="unavail" hidden></p>
+      <div class="actions">
+        <button type="button" class="primary" id="go" disabled>Analyser</button>
+      </div>
+      <p class="status" id="status" role="status"></p>
+    </section>
+
+    <section class="result" id="result" aria-live="polite"></section>
+
+    <footer class="foot">
+      <p>Analyse automatique par règles techniques, calculée à partir de l'image : vérifie toujours les niveaux sur ton propre graphique avant d'agir. Ce n'est pas un conseil en investissement.</p>
+    </footer>
+  </main>
+
+  <main id="view-hist" class="view" hidden>
+    <section class="hist" aria-labelledby="hist-h">
+      <h2 id="hist-h">Historique</h2>
+      <div class="hist-list" id="histList"></div>
+      <div id="histTools"></div>
+    </section>
+  </main>
+
+  <main id="view-guide" class="view" hidden>
+    <section class="guide">
+      <h2>Bien capturer pour une lecture fiable</h2>
+      <p>L'appli lit les bougies d'après leurs couleurs et l'axe des prix d'après le texte de l'écran. Quelques réglages dans MT5 suffisent.</p>
+      <ol class="steps">
+        <li><strong>Bougies vertes et rouges.</strong> Dans MT5, choisis un affichage en chandeliers avec des bougies haussières vertes (ou bleues) et baissières rouges, sur fond blanc ou noir uni.</li>
+        <li><strong>Pas d'indicateur sur le graphique.</strong> Retire moyennes mobiles, volumes et objets dessinés : l'appli calcule elle-même EMA, RSI, MACD et ATR. Une moyenne mobile verte ou rouge fait disparaître des bougies.</li>
+        <li><strong>L'axe des prix visible.</strong> Les prix à droite du graphique doivent être nets, avec au moins trois valeurs affichées.</li>
+        <li><strong>Le bon zoom.</strong> Vise 40 à 120 bougies à l'écran. Trop dézoomé, les bougies deviennent des traits et l'ouverture ou la clôture ne se lisent plus.</li>
+        <li><strong>Le titre visible.</strong> Laisse la paire et l'unité de temps affichées en haut à gauche (par exemple « XAUUSD, M5 »), sinon choisis-les dans l'appli.</li>
+        <li><strong>Deux captures pour plus de recul.</strong> Une grande unité (H1) donne le contexte, une petite (M5) le moment d'entrer.</li>
+      </ol>
+      <p>Après chaque analyse, ouvre « Contrôle de lecture » : les bougies repérées et les niveaux sont dessinés sur ta capture. Si le dessin ne colle pas au graphique, refais la capture en suivant ces conseils.</p>
+    </section>
+  </main>
+</div>
+<script src="reader.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

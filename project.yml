@@ -1,0 +1,46 @@
+name: Decodeur
+options:
+  bundleIdPrefix: com.decodeurgraphique
+  deploymentTarget:
+    iOS: "16.0"
+  developmentLanguage: fr
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "2.0"
+    CURRENT_PROJECT_VERSION: "2"
+targets:
+  Decodeur:
+    type: application
+    platform: iOS
+    sources:
+      - path: Decodeur
+        excludes:
+          - "web/**"
+      # L'interface et le moteur d'analyse, copiés tels quels dans l'appli
+      - path: Decodeur/web
+        type: folder
+        buildPhase: resources
+    info:
+      path: Decodeur/Info.plist
+      properties:
+        CFBundleDisplayName: Décodeur
+        CFBundleDevelopmentRegion: fr
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSPhotoLibraryUsageDescription: Choisir les captures de ton graphique à analyser.
+        NSCameraUsageDescription: Photographier un graphique à analyser.
+        ITSAppUsesNonExemptEncryption: false
+    settings:
+      base:
+        # Change la fin de cet identifiant si Xcode ou Sideloadly le dit déjà utilisé.
+        PRODUCT_BUNDLE_IDENTIFIER: com.decodeurgraphique.autonome
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic
+    scheme: {}

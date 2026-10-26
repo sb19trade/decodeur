@@ -1,0 +1,45 @@
+name: Construire l'IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer XcodeGen
+        run: brew install xcodegen
+
+      - name: Générer le projet Xcode
+        run: xcodegen generate
+
+      - name: Compiler pour iPhone (sans signature)
+        run: |
+          xcodebuild \
+            -project Decodeur.xcodeproj \
+            -target Decodeur \
+            -configuration Release \
+            -sdk iphoneos \
+            SYMROOT="$PWD/build" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Emballer en fichier .ipa
+        run: |
+          mkdir -p Payload
+          cp -R build/Release-iphoneos/Decodeur.app Payload/
+          zip -qry Decodeur.ipa Payload
+
+      - name: Mettre l'IPA à disposition
+        uses: actions/upload-artifact@v4
+        with:
+          name: Decodeur-ipa
+          path: Decodeur.ipa
+          retention-days: 30
